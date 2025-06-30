@@ -1,22 +1,23 @@
-import React, { createContext, useState, useEffect } from 'react';
+// src/context/ThemeContext.jsx
+
+import React, { createContext, useEffect } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
-export const ThemeContext = createContext({
-  theme: 'light',
-  toggleTheme: () => {},
-});
+export const ThemeContext = createContext();
 
 export default function ThemeProvider({ children }) {
+  // ⚡ Persist and read the current theme ("light" or "dark")
   const [theme, setTheme] = useLocalStorage('theme', 'light');
 
-  // Apply theme class to <html>
-  useEffect(() => {
-    document.documentElement.className = theme;
-  }, [theme]);
-
+  // Toggle between light and dark
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
+
+  // Whenever theme changes, swap the `html` class to switch CSS variables
+  useEffect(() => {
+    document.documentElement.className = theme === 'dark' ? 'dark' : '';
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
